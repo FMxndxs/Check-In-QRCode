@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Check-In via QR Code</title>
+</head>
+<body>
+    <h1>Leitor de QR Code</h1>
+    <video id="preview" width="400" height="300"></video>
+    <p id="result"></p>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+    <script>
+        const resultEl = document.getElementById("result");
+        const html5QrCode = new Html5Qrcode("preview");
+
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                html5QrCode.start(
+                    devices[0].id,
+                    {
+                        fps: 10,
+                        qrbox: 250
+                    },
+                    qrCodeMessage => {
+                        html5QrCode.stop();
+                        fetch('/verify_id', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({id: qrCodeMessage})
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                resultEl.innerHTML = `✅ Check-in realizado com sucesso! Bem-vindo, ${data.nome}`;
+                            } else {
+                                resultEl.innerHTML = `❌ ${data.message}`;
+                            }
+                        });
+                    },
+                    errorMessage => {}
+                );
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Lista de Participantes</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th><th>Nome</th><th>Email</th><th>Check-in</th>
+        </tr>
+        {% for p in participantes %}
+        <tr>
+            <td>{{ p[0] }}</td>
+            <td>{{ p[1] }}</td>
+            <td>{{ p[2] }}</td>
+            <td>{{ '✔️' if p[3] else '❌' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
